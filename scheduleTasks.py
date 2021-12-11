@@ -1,4 +1,2 @@
-import time 
-while True : 
-    print("Scheduling Tasks")
-    time.sleep(2)
+with open("D:\Projects\FedStation-lib\sample.txt", 'w') as fout:
+        fout.write("TASK EXECUTED")

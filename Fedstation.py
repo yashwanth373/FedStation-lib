@@ -29,39 +29,7 @@ class Fedstation :
         #user authentication and identification is Done 
         #run the schedule tasks as window service 
 
-        #pre-requisites 
-        #dowload NSSM(Non Sucking Service Manager) on to your project main directory
-        # python_path_cmd = r'python -c "exec(\"import sys\nprint(sys.executable)\")"'
-        # os.system(python_path_cmd)
-
-        create_service_cmd  = "nssm install taskscheduler " + "D:\Python310\python.exe" + " D:\Projects\FedStation-lib\scheduleTasks.py"
-        error_log_cmd = r"nssm set taskscheduler AppStderr D:\Projects\FedStation-lib\nssm_error_logs.log"
-        output_log_cmd = r"nssm set taskscheduler AppStdout D:\Projects\FedStation-lib\nssm_output_logs.log"
-
-        #creating Window Service to schedule Tasks
-        #os.system(create_service_cmd)
-        
-        # os.system("nssm remove taskscheduler")
-
-        start_service_cmd = "nssm start taskscheduler"
-        os.system(start_service_cmd)
-
-        #setting paths to log files 
-        #files should already exits
-
-        os.system(error_log_cmd); 
-        os.system(output_log_cmd)
-
-        #setting path to log files DONE 
-
-        pass
-    def getProjectMetaData(self): 
-
-        #gets projects meta data from the Fedstation Primary Server 
-        #throws error if 
-        #not an authenticated user 
-        #respone not found
-        #request denied 
+        self.scheduleTasks() 
 
         pass 
     
@@ -133,6 +101,43 @@ class Fedstation :
         
     def scheduleTasks(self): 
         #schedules send & recieve of the model
+        import datetime
+        import win32com.client
+
+        scheduler = win32com.client.Dispatch('Schedule.Service')
+        scheduler.Connect()
+        root_folder = scheduler.GetFolder('\\')
+        task_def = scheduler.NewTask(0)
+
+        # Create trigger
+        start_time = datetime.datetime.now() + datetime.timedelta(seconds=5)
+        TASK_TRIGGER_TIME = 1
+        trigger = task_def.Triggers.Create(TASK_TRIGGER_TIME)
+        trigger.StartBoundary = start_time.isoformat()
+
+        # Create action
+        TASK_ACTION_EXEC = 0
+        action = task_def.Actions.Create(TASK_ACTION_EXEC)
+        action.ID = 'DO NOTHING'
+        action.Path = 'D:\Projects\FedStation-lib\scheduleTasks.py'
+        action.WorkingDirectory = "D:\Projects\FedStation-lib\\"
+
+        # Set parameters
+        task_def.RegistrationInfo.Description = 'Test Task'
+        task_def.Settings.Enabled = True
+        task_def.Settings.StopIfGoingOnBatteries = False
+
+        # Register task
+        # If task already exists, it will be updated
+        TASK_CREATE_OR_UPDATE = 6
+        TASK_LOGON_NONE = 0
+        root_folder.RegisterTaskDefinition(
+            'Send or Recieve Model',  # Task name
+            task_def,
+            TASK_CREATE_OR_UPDATE,
+            '',  # No user
+            '',  # No password
+            TASK_LOGON_NONE)
         pass 
 
 
