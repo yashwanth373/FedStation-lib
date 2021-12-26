@@ -38,6 +38,7 @@ class Fedstation :
             'projectKey' : project_key,
         }
         resp  = requests.get(self.__project_details_url , params= PARAMS)
+        print(resp)
         if(resp.status_code == 200):
             self.project_meta_data = resp.json()
             print(self.project_meta_data)
@@ -167,7 +168,8 @@ class Fedstation :
         TASK_ACTION_EXEC = 0
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.ID = 'recieve'
-        action.Path = 'D:\Projects\FedStation-lib\RecieveModel.py'
+        action.Path = '%windir%\system32\cmd.exe'
+        action.Arguments = "/c python D:\Projects\FedStation-lib\RecieveModel.py"
         action.WorkingDirectory = "D:\Projects\FedStation-lib\\"
 
         # Set parameters
@@ -189,7 +191,7 @@ class Fedstation :
 
     def scheduleTasks(self): 
         self.scheduleSendTask()
-        #self.scheduleRecieveTask()
+        self.scheduleRecieveTask()
 
 
 

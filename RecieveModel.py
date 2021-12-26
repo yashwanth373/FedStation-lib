@@ -44,7 +44,7 @@ def recieveModelFromServer():
         print(model)
 
         with open('test.txt', 'w') as f:
-            f.write(model)
+            f.write("MODEL RECEIVED FROM SERVER")
 
 
 recieveModelFromServer()
