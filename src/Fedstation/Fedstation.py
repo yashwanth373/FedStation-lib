@@ -195,6 +195,7 @@ class Fedstation :
 
 
 
-if __name__ == "__main__" :
-    F = Fedstation()
-    F.initializeProject("projectZee" , "1639466861939JQSI8LK")
+# if __name__ == "__main__" :
+#     F = Fedstation()
+#     F.initializeProject("projectZee" , "1639466861939JQSI8LK")
+print(pickle.format_version)
