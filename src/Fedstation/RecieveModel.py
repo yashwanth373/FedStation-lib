@@ -1,9 +1,10 @@
+import shutil
 import requests
 import pickle
 import numpy
 
 
-MODEL_PICKEL_FILENAME = "toxic_msgs_logistic_regression_and_vector"
+MODEL_PICKEL_FILENAME = "toxic_msgs_logistic_regression_and_vector.pkl"
 
 def getModel(): 
         #retrieves the model from the pickle file 
@@ -15,36 +16,13 @@ def getModel():
         #if pickle file not found or empty 
 def recieveModelFromServer(): 
         #recieve model from server
-        search_api_url = "https://insight-middleware-service.herokuapp.com/get-best-model"
+        search_api_url = "http://127.0.0.1:8000/getGlobalModelFile/k_k"
 
         
-        resp = None 
-        while(True):
-                resp = requests.get(url = search_api_url)
-                print(resp)
-                resp = resp.json()
-                if(resp.status_code  == 200):
-                        break 
-        
-
-        
-        #update Model 
-        model  = getModel()
-        model.classes_ = numpy.array(resp["classes_"])
-        model.coef_ = numpy.array(resp["coef_"])
-        model.intercept_ = numpy.array(resp["intercept_"])
-        model.n_iter_ = numpy.array(resp["n_iter_"])
-
-        filename = MODEL_PICKEL_FILENAME 
-
-        with open(filename, 'wb') as fout:
-            pickle.dump(model, fout)
-
-        print("MODEL RECEIVED FROM SERVER")
-        print(model)
-
-        with open('test.txt', 'w') as f:
-            f.write("MODEL RECEIVED FROM SERVER")
+        with requests.get(search_api_url, stream=True) as r:
+            with open(MODEL_PICKEL_FILENAME, 'wb') as f:
+                shutil.copyfileobj(r.raw, f)
+                
 
 
 recieveModelFromServer()

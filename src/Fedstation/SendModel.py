@@ -22,21 +22,16 @@ def sendModelToServer():
         #sends model in pickle file to server 
         
         model = getModel()
-        search_api_url = "https://insight-middleware-service.herokuapp.com/send-model"
+        search_api_url = "http://127.0.0.1:8000/uploadModelToFirebase/k_k"
         
+        files = {'upload_file': open(MODEL_PICKEL_FILENAME,'rb')}
         
-        data = {
-            'classes_': model.classes_.tolist() ,
-            'coef_':model.coef_.tolist() ,
-            'intercept_': model.intercept_.tolist() ,
-            'n_iter_': model.n_iter_.tolist()
+        headers = {
+                'Content-Type' : 'application/octet-stream'
         }
-        
 
-        while(True):
-                resp  = requests.post(url = search_api_url, json=data)
-                if(resp.status_code == 200):
-                        break 
+        resp  = requests.post(url = search_api_url, files=files , headers=headers)
+        print(resp.json , "RESPONSE   SS")
 
 
         print("MODEL SENT TO SERVER")
