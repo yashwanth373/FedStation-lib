@@ -121,7 +121,7 @@ class Fedstation :
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.ID = 'send'
         action.Path = '%windir%\system32\cmd.exe'
-        action.Arguments = "/c python D:\Projects\FedStation-lib\SendModel.py"
+        action.Arguments = "/c python D:\Projects\FedStation-lib\SendModel.py " + self.project_id
         action.WorkingDirectory = "D:\Projects\FedStation-lib\\"
 
         # Set parameters
@@ -169,7 +169,7 @@ class Fedstation :
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.ID = 'recieve'
         action.Path = '%windir%\system32\cmd.exe'
-        action.Arguments = "/c python D:\Projects\FedStation-lib\RecieveModel.py"
+        action.Arguments = "/c python D:\Projects\FedStation-lib\RecieveModel.py "+ self.project_id
         action.WorkingDirectory = "D:\Projects\FedStation-lib\\"
 
         # Set parameters
