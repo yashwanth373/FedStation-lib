@@ -10,8 +10,8 @@ import os
 class Fedstation : 
     #App attributes 
     pre_scheduled_month  = None 
-    project_id = 0 
-    project_key = 0 
+    project_id = "" 
+    project_key = "" 
     project_meta_data = {}
     model_pickel_filename = "toxic_msgs_logistic_regression_and_vector.pkl"
     __primary_server_package_url  = "http://localhost:8080/packageApi/"
@@ -60,6 +60,7 @@ class Fedstation :
         if(self.pre_scheduled_month == None or curr_month != self.pre_scheduled_month):
             self.scheduleTasks() 
             self.pre_scheduled_month  = curr_month
+        return "done"
 
     
     def verifyModel(self , model):
