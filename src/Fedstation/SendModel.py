@@ -32,4 +32,5 @@ def sendModelToServer(project_id=""):
         #throws error if 
         #request denied 
 
-sendModelToServer()
+# sendModelToServer()
+print("calling SendModel")
