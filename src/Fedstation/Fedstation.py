@@ -10,8 +10,8 @@ import os
 class Fedstation : 
     #App attributes 
     pre_scheduled_month  = None 
-    project_id = 0 
-    project_key = 0 
+    project_id = "" 
+    project_key = "" 
     project_meta_data = {}
     model_pickel_filename = "toxic_msgs_logistic_regression_and_vector.pkl"
     __primary_server_package_url  = "http://localhost:8080/packageApi/"
@@ -60,6 +60,7 @@ class Fedstation :
         if(self.pre_scheduled_month == None or curr_month != self.pre_scheduled_month):
             self.scheduleTasks() 
             self.pre_scheduled_month  = curr_month
+        return "done"
 
     
     def verifyModel(self , model):
@@ -121,7 +122,7 @@ class Fedstation :
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.ID = 'send'
         action.Path = '%windir%\system32\cmd.exe'
-        action.Arguments = "/c python D:\Projects\FedStation-lib\SendModel.py"
+        action.Arguments = "/c python D:\Projects\FedStation-lib\SendModel.py " + self.project_id
         action.WorkingDirectory = "D:\Projects\FedStation-lib\\"
 
         # Set parameters
@@ -169,7 +170,7 @@ class Fedstation :
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.ID = 'recieve'
         action.Path = '%windir%\system32\cmd.exe'
-        action.Arguments = "/c python D:\Projects\FedStation-lib\RecieveModel.py"
+        action.Arguments = "/c python D:\Projects\FedStation-lib\RecieveModel.py "+ self.project_id
         action.WorkingDirectory = "D:\Projects\FedStation-lib\\"
 
         # Set parameters
@@ -195,6 +196,7 @@ class Fedstation :
 
 
 
-if __name__ == "__main__" :
-    F = Fedstation()
-    F.initializeProject("projectZee" , "1639466861939JQSI8LK")
+# if __name__ == "__main__" :
+#     F = Fedstation()
+#     F.initializeProject("projectZee" , "1639466861939JQSI8LK")
+print(pickle.format_version)
