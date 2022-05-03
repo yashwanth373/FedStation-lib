@@ -3,7 +3,7 @@ import pickle
 import sys
 import random 
 
-MODEL_PICKEL_FILENAME = "toxic_msgs_logistic_regression_and_vector.pkl"
+MODEL_PICKEL_FILENAME = "model.pkl"
 def generateID(): 
         return "FED" 
 
@@ -17,7 +17,7 @@ def sendModelToServer(project_id=""):
 
                 if(PROJECT_ID == None):
                         PROJECT_ID = project_id
-                search_api_url = "http://127.0.0.1:8000/uploadModelToFirebase/" + PROJECT_ID
+                search_api_url = "https://fedstation-ml-service.herokuapp.com/uploadModelToFirebase/" + PROJECT_ID
                 
                 files = {'upload_file': (generateID() ,open(MODEL_PICKEL_FILENAME,'rb'),"multipart/form-data")}
 

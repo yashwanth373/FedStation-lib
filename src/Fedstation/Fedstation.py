@@ -10,18 +10,19 @@ import os
 class Fedstation : 
     #App attributes 
     pre_scheduled_month  = None 
+    pre_scheduled_day = None
     project_id = "" 
     project_key = "" 
     project_meta_data = {}
-    model_pickel_filename = "toxic_msgs_logistic_regression_and_vector.pkl"
-    __primary_server_package_url  = "http://localhost:8080/packageApi/"
+    model_pickel_filename = "model.pkl"
+    __primary_server_package_url  = "http://fedstation.herokuapp.com/packageApi/"
 
     __project_details_url  = __primary_server_package_url + "getProjectDetails"
     __MIN_KEY_LEN = 20 
     #add required later 
 
     
-    def initializeProject(self, project_id, project_key):
+    def initializeProject(self, project_id, project_key, exact_path):
         #Identify User(Dev)  using PROJECT_ID 
 
         #Authenticate User using PROJECT_KEY
@@ -57,8 +58,17 @@ class Fedstation :
         #user authentication and identification is Done 
         #run the schedule tasks as window service 
         curr_month  = datetime.now().month
+        curr_day = datetime.now().day
+
+        print(curr_day , "DAY")
+        print(curr_month , "MONTH")
+
+        if(self.pre_scheduled_day == None or curr_day != self.pre_scheduled_day):
+            self.scheduleTrain(exact_path=exact_path)
+            self.pre_scheduled_day = curr_day
         if(self.pre_scheduled_month == None or curr_month != self.pre_scheduled_month):
-            self.scheduleTasks() 
+            #self.scheduleTasks() 
+            self.scheduleSendTask()
             self.pre_scheduled_month  = curr_month
         return "done"
 
@@ -110,7 +120,7 @@ class Fedstation :
         print(start_time)
         
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=3)
+        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=20)
         #end temp code
 
         TASK_TRIGGER_TIME = 1
@@ -122,6 +132,9 @@ class Fedstation :
         action = task_def.Actions.Create(TASK_ACTION_EXEC)
         action.ID = 'send'
         action.Path = '%windir%\system32\cmd.exe'
+
+        # 1.universal path for arguments and working dir 
+
         action.Arguments = "/c python "+os.getcwd()+"\SendModel.py " + self.project_id
         action.WorkingDirectory = os.getcwd()+"\\"
 
@@ -189,6 +202,60 @@ class Fedstation :
             '',  # No user
             '',  # No password
             TASK_LOGON_NONE) 
+    
+    def scheduleTrain(self, exact_path):
+        #schedules send & recieve of the model
+        import datetime
+        import win32com.client
+
+        scheduler = win32com.client.Dispatch('Schedule.Service')
+        scheduler.Connect()
+        root_folder = scheduler.GetFolder('\\')
+        task_def = scheduler.NewTask(0)
+
+        # Create trigger
+        #send_hour = int(self.project_meta_data["startAtTime"])
+        send_hour  = 1
+        start_time = datetime.datetime.now()
+        start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
+        print(start_time)
+        
+        #temp code 
+        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        #end temp code
+
+        TASK_TRIGGER_TIME = 1
+        trigger = task_def.Triggers.Create(TASK_TRIGGER_TIME)
+        trigger.StartBoundary = start_time.isoformat()
+
+        # Create action
+        TASK_ACTION_EXEC = 0
+        action = task_def.Actions.Create(TASK_ACTION_EXEC)
+        action.ID = 'train'
+        action.Path = '%windir%\system32\cmd.exe'
+
+        # 1.universal path for arguments and working dir 
+
+        action.Arguments = "/c python "+ exact_path 
+        action.WorkingDirectory = os.getcwd()+"\\"
+
+        # Set parameters
+        task_def.RegistrationInfo.Description = 'Test Task'
+        task_def.Settings.Enabled = True
+        task_def.Settings.StopIfGoingOnBatteries = False
+        # Register task
+        # If task already exists, it will be updated
+        TASK_CREATE_OR_UPDATE = 6
+        TASK_LOGON_NONE = 0
+        root_folder.RegisterTaskDefinition(
+            'Train Model',  # Task name
+            task_def,
+            TASK_CREATE_OR_UPDATE,
+            '',  # No user
+            '',  # No password
+            TASK_LOGON_NONE)
+        
+
 
     def scheduleTasks(self): 
         self.scheduleSendTask()
@@ -198,5 +265,4 @@ class Fedstation :
 
 # if __name__ == "__main__" :
 #     F = Fedstation()
-#     F.initializeProject("projectZee" , "1639466861939JQSI8LK")
-print(pickle.format_version)
+#     F.initializeProject("k_k" , "1648444147210UCHNXNT" ,"D:\Projects\FedStation-lib\src\Fedstation\constants.py")
