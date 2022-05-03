@@ -2,7 +2,7 @@ import shutil
 import sys
 import requests
 
-MODEL_PICKEL_FILENAME = "toxic_msgs_logistic_regression_and_vector.pkl"
+MODEL_PICKEL_FILENAME = "model.pkl"
 PROJECT_ID = ""
 def recieveModelFromServer(project_id = ""): 
         #recieve model from server
@@ -11,7 +11,7 @@ def recieveModelFromServer(project_id = ""):
         except Exception as e : 
             PROJECT_ID = project_id
         try:
-            search_api_url = "http://127.0.0.1:8000/getGlobalModelFile/" + PROJECT_ID
+            search_api_url = "https://fedstation-ml-service.herokuapp.com/getGlobalModelFile/" + PROJECT_ID
             
             with requests.get(search_api_url, stream=True) as r:
                 with open(MODEL_PICKEL_FILENAME, 'wb') as f:
