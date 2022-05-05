@@ -1,10 +1,10 @@
 #importing required Libraries 
 from datetime import datetime
-import json
+import json, sys
 import requests 
 # import numpy
 import pickle
-import os 
+import os
 
 #Single Class for Project 
 class Fedstation : 
@@ -43,6 +43,7 @@ class Fedstation :
         if(resp.status_code == 200):
             self.project_meta_data = resp.json()
             print(self.project_meta_data)
+            self.project_id = project_id
         elif(resp.status_code == 404) : 
             raise Exception("Project Not found")
         elif (resp.status_code in [403 , 401]) : 
@@ -107,6 +108,9 @@ class Fedstation :
         import datetime
         import win32com.client
 
+        # Default path for any Python scripts, hence the hardcoded path
+        SEND_MODEL_PATH = os.path.dirname(sys.executable)+"\Lib\site-packages\Fedstation"
+
         scheduler = win32com.client.Dispatch('Schedule.Service')
         scheduler.Connect()
         root_folder = scheduler.GetFolder('\\')
@@ -135,8 +139,10 @@ class Fedstation :
 
         # 1.universal path for arguments and working dir 
 
-        action.Arguments = "/c python "+os.getcwd()+"\SendModel.py " + self.project_id
+        action.Arguments = "/c python "+SEND_MODEL_PATH+"\SendModel.py " + self.project_id
         action.WorkingDirectory = os.getcwd()+"\\"
+
+        print(action.Arguments)
 
         # Set parameters
         task_def.RegistrationInfo.Description = 'Test Task'
