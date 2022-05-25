@@ -3,6 +3,7 @@ README.md
 pyproject.toml
 setup.cfg
 src/Fedstation/EnsembleARIMA.py
+src/Fedstation/Fedstation.py
 src/Fedstation/RecieveModel.py
 src/Fedstation/SendModel.py
 src/Fedstation/__init__.py
