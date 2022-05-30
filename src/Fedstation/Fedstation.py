@@ -5,6 +5,8 @@ import requests
 # import numpy
 import pickle
 import os
+import random
+import os.path
 
 #Single Class for Project 
 class Fedstation : 
@@ -39,12 +41,14 @@ class Fedstation :
             'projectKey' : project_key,
         }
         resp  = requests.get(self.__project_details_url , params= PARAMS)
-        print(resp)
-        if(resp.status_code == 200):
+        print(resp.text)
+        if(resp.text == ""):
+            raise Exception("Invalid Project Id or Project Key")
+        elif(resp.status_code == 200):
             self.project_meta_data = resp.json()
             print(self.project_meta_data)
             self.project_id = project_id
-        elif(resp.status_code == 404) : 
+        elif(resp.status_code == 404):
             raise Exception("Project Not found")
         elif (resp.status_code in [403 , 401]) : 
             raise Exception("unauthorized or Forbiden")
@@ -266,9 +270,57 @@ class Fedstation :
     def scheduleTasks(self): 
         self.scheduleSendTask()
         self.scheduleRecieveTask()
+    
+
+
+    # Functions below are written here for developer's testing purpose
+
+    def generateID(self):
+
+        ID = "" 
+
+        file_exists = os.path.exists('conf.txt')
+
+        if file_exists:
+                with open('conf.txt', 'r') as f:
+                        lines = f.readlines()
+                        for line in lines:
+                                line = line.split(" ")
+                                if line[0] == "modelFileName":
+                                        ID = line[1]
+        else:
+                ID = str(random.randint(0, 1000000))
+                with open('conf.txt', 'w') as f:
+                        f.write("modelFileName " + ID)
+        return ID
+
+    def sendModelToServer(self,project_id=""):
+        MODEL_PICKEL_FILENAME = "model.pkl"
+        #sends model in pickle file to server
+        PROJECT_ID = project_id
+        print(PROJECT_ID) 
+        try:
+
+                if(PROJECT_ID == None):
+                        PROJECT_ID = project_id
+                search_api_url = "https://fedstation-ml-service.herokuapp.com/uploadModelToFirebase/" + PROJECT_ID
+                
+                files = {'upload_file': (self.generateID() ,open(MODEL_PICKEL_FILENAME,'rb'),"multipart/form-data")}
+
+                resp  = requests.post(url = search_api_url, files=files)
+                print(resp.json())
+                with open('test.txt', 'w') as f:
+                        f.write(PROJECT_ID)
+                return "sent"
+        except Exception as e : 
+                print(e)
+                return "!sent"
+        #throws error if 
+        #request denied 
 
 
 
 # if __name__ == "__main__" :
 #     F = Fedstation()
-#     F.initializeProject("k_k" , "1648444147210UCHNXNT" ,"D:\Projects\FedStation-lib\src\Fedstation\constants.py") 
+#     F.sendModelToServer("k_k")
+    #F.initializeProject("k_k" , "1648444147210UCHNXNT" ,'"C:\\Users\\Yashw\\Documents\\4-2\\Major Project\\Code\\FedStation-lib\\src\\Fedstation\\constants.py"') 
