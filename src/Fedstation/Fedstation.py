@@ -294,7 +294,7 @@ class Fedstation :
                         f.write("modelFileName " + ID)
         return ID
 
-    def sendModelToServer(self,project_id=""):
+    def sendModelToServer(self,project_id):
         MODEL_PICKEL_FILENAME = "model.pkl"
         #sends model in pickle file to server
         PROJECT_ID = project_id
@@ -316,11 +316,24 @@ class Fedstation :
                 print(e)
                 return "!sent"
         #throws error if 
-        #request denied 
+        #request denied
 
+    def aggregateModels(self,project_id):
+        # aggregate request for ML Service
 
+        PROJECT_ID = project_id
+
+        try:
+                if(PROJECT_ID == None):
+                        PROJECT_ID = project_id
+                search_api_url = "https://fedstation-ml-service.herokuapp.com/aggregate/" + PROJECT_ID
+                resp  = requests.get(url = search_api_url)
+                return resp.json()
+        except Exception as e : 
+                raise e
 
 # if __name__ == "__main__" :
 #     F = Fedstation()
-#     F.sendModelToServer("k_k")
+    # F.sendModelToServer("k_k")
+    # print(F.aggregateModels("exp_track"))
     #F.initializeProject("k_k" , "1648444147210UCHNXNT" ,'"C:\\Users\\Yashw\\Documents\\4-2\\Major Project\\Code\\FedStation-lib\\src\\Fedstation\\constants.py"') 
