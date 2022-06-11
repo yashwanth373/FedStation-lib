@@ -117,8 +117,8 @@ class Fedstation :
         task_def = scheduler.NewTask(0)
 
         # Create trigger
-        #send_hour = int(self.project_meta_data["startAtTime"])
-        send_hour  = 2
+        send_hour = int(self.project_meta_data["startAtTime"])
+        # send_hour  = 2
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
@@ -171,8 +171,8 @@ class Fedstation :
         task_def = scheduler.NewTask(0)
 
         # Create trigger
-        #send_hour = int(self.project_meta_data["startAtTime"])
-        send_hour  = 6
+        send_hour = int(self.project_meta_data["startAtTime"])
+        # send_hour  = 6
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
@@ -220,8 +220,8 @@ class Fedstation :
         task_def = scheduler.NewTask(0)
 
         # Create trigger
-        #send_hour = int(self.project_meta_data["startAtTime"])
-        send_hour  = 1
+        send_hour = int(self.project_meta_data["startAtTime"])
+        # send_hour  = 1
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
@@ -269,6 +269,6 @@ class Fedstation :
 
 
 
-# if __name__ == "__main__" :
-#     F = Fedstation()
-#     F.initializeProject("k_k" , "1648444147210UCHNXNT" ,"D:\Projects\FedStation-lib\src\Fedstation\constants.py")
+if __name__ == "__main__" :
+    F = Fedstation()
+    F.initializeProject("k_k" , "1654531123218L4CNU29" ,"D:\Projects\FedStation-lib\src\Fedstation\constants.py")
