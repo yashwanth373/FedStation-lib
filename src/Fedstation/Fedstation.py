@@ -121,14 +121,14 @@ class Fedstation :
         task_def = scheduler.NewTask(0)
 
         # Create trigger
-        #send_hour = int(self.project_meta_data["startAtTime"])
-        send_hour  = 2
+        send_hour = int(self.project_meta_data["startAtTime"])
+        #send_hour  = 2
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
 
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=20)
+        # start_time  = datetime.datetime.now() + datetime.timedelta(seconds=20)
         #end temp code
 
         TASK_TRIGGER_TIME = 1
@@ -175,14 +175,14 @@ class Fedstation :
         task_def = scheduler.NewTask(0)
 
         # Create trigger
-        #send_hour = int(self.project_meta_data["startAtTime"])
-        send_hour  = 6
+        send_hour = int(self.project_meta_data["startAtTime"])
+        # send_hour  = 6
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
 
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        # start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
         #end temp code
         TASK_TRIGGER_TIME = 1
         trigger = task_def.Triggers.Create(TASK_TRIGGER_TIME)
@@ -224,14 +224,14 @@ class Fedstation :
         task_def = scheduler.NewTask(0)
 
         # Create trigger
-        #send_hour = int(self.project_meta_data["startAtTime"])
-        send_hour  = 1
+        send_hour = int(self.project_meta_data["startAtTime"])
+        # send_hour  = 1
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
 
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        # start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
         #end temp code
 
         TASK_TRIGGER_TIME = 1
