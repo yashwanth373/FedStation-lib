@@ -1,13 +1,11 @@
 Metadata-Version: 2.1
 Name: Fedstation
-Version: 0.0.3
+Version: 0.0.7
 Summary: privacy preserving framework for ML Applications
 Home-page: https://github.com/TarangGarlapally/FedStation-lib
 Author: KYKT
 Author-email: theconscienceofficial@gmail.com
-License: UNKNOWN
 Project-URL: Bug Tracker, https://github.com/TarangGarlapally/FedStation-lib/issues
-Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Operating System :: OS Independent
@@ -17,5 +15,3 @@ License-File: LICENSE
 
 # FedStation-lib
 Python Package for FedStation
-
-

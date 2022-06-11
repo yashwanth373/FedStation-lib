@@ -5,6 +5,8 @@ import requests
 # import numpy
 import pickle
 import os
+import random
+import os.path
 
 #Single Class for Project 
 class Fedstation : 
@@ -21,7 +23,7 @@ class Fedstation :
     __MIN_KEY_LEN = 20 
     #add required later 
 
-    
+
     def initializeProject(self, project_id, project_key, exact_path):
         #Identify User(Dev)  using PROJECT_ID 
 
@@ -39,18 +41,20 @@ class Fedstation :
             'projectKey' : project_key,
         }
         resp  = requests.get(self.__project_details_url , params= PARAMS)
-        print(resp)
-        if(resp.status_code == 200):
+        print(resp.text)
+        if(resp.text == ""):
+            raise Exception("Invalid Project Id or Project Key")
+        elif(resp.status_code == 200):
             self.project_meta_data = resp.json()
             print(self.project_meta_data)
             self.project_id = project_id
-        elif(resp.status_code == 404) : 
+        elif(resp.status_code == 404):
             raise Exception("Project Not found")
         elif (resp.status_code in [403 , 401]) : 
             raise Exception("unauthorized or Forbiden")
         else : 
             raise Exception("unable to retrive data")
-         
+
         #throws error if unable to inititalize the Project
         #project details doesn't match
         #attributes missing 
@@ -73,7 +77,7 @@ class Fedstation :
             self.pre_scheduled_month  = curr_month
         return "done"
 
-    
+
     def verifyModel(self , model):
         #verify the model using the extracted Model meta data
         #from the Primary Server
@@ -89,10 +93,10 @@ class Fedstation :
         filename = self.model_pickle_filename
         with open(filename, 'wb') as fout:
             pickle.dump(new_model, fout)
-        
+
         #throws error if
         #invald model is provided 
-    
+
     def getModel(self): 
         #retrieves the model from the pickle file 
         #and returns the Model 
@@ -101,8 +105,8 @@ class Fedstation :
         return model
         #throws errors 
         #if pickle file not found or empty 
-        
-    
+
+
     def scheduleSendTask(self):
         #schedules send & recieve of the model
         import datetime
@@ -118,13 +122,13 @@ class Fedstation :
 
         # Create trigger
         send_hour = int(self.project_meta_data["startAtTime"])
-        # send_hour  = 2
+        #send_hour  = 2
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
-        
+
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=20)
+        # start_time  = datetime.datetime.now() + datetime.timedelta(seconds=20)
         #end temp code
 
         TASK_TRIGGER_TIME = 1
@@ -159,7 +163,7 @@ class Fedstation :
             '',  # No user
             '',  # No password
             TASK_LOGON_NONE)
-        
+
     def scheduleRecieveTask(self): 
         #schedules send & recieve of the model
         import datetime
@@ -176,9 +180,9 @@ class Fedstation :
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
-        
+
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        # start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
         #end temp code
         TASK_TRIGGER_TIME = 1
         trigger = task_def.Triggers.Create(TASK_TRIGGER_TIME)
@@ -208,7 +212,7 @@ class Fedstation :
             '',  # No user
             '',  # No password
             TASK_LOGON_NONE) 
-    
+
     def scheduleTrain(self, exact_path):
         #schedules send & recieve of the model
         import datetime
@@ -225,9 +229,9 @@ class Fedstation :
         start_time = datetime.datetime.now()
         start_time  = (start_time.replace(day=1) + datetime.timedelta(days=32)).replace(day=1 , hour=send_hour , minute=0 , second= 0 , microsecond= 0)
         print(start_time)
-        
+
         #temp code 
-        start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
+        # start_time  = datetime.datetime.now() + datetime.timedelta(seconds=10)
         #end temp code
 
         TASK_TRIGGER_TIME = 1
@@ -260,15 +264,76 @@ class Fedstation :
             '',  # No user
             '',  # No password
             TASK_LOGON_NONE)
-        
+
 
 
     def scheduleTasks(self): 
         self.scheduleSendTask()
         self.scheduleRecieveTask()
+    
 
 
+    # Functions below are written here for developer's testing purpose
 
-if __name__ == "__main__" :
-    F = Fedstation()
-    F.initializeProject("k_k" , "1654531123218L4CNU29" ,"D:\Projects\FedStation-lib\src\Fedstation\constants.py")
+    def generateID(self):
+
+        ID = "" 
+
+        file_exists = os.path.exists('conf.txt')
+
+        if file_exists:
+                with open('conf.txt', 'r') as f:
+                        lines = f.readlines()
+                        for line in lines:
+                                line = line.split(" ")
+                                if line[0] == "modelFileName":
+                                        ID = line[1]
+        else:
+                ID = str(random.randint(0, 1000000))
+                with open('conf.txt', 'w') as f:
+                        f.write("modelFileName " + ID)
+        return ID
+
+    def sendModelToServer(self,project_id):
+        MODEL_PICKEL_FILENAME = "model.pkl"
+        #sends model in pickle file to server
+        PROJECT_ID = project_id
+        print(PROJECT_ID) 
+        try:
+
+                if(PROJECT_ID == None):
+                        PROJECT_ID = project_id
+                search_api_url = "https://fedstation-ml-service.herokuapp.com/uploadModelToFirebase/" + PROJECT_ID
+                
+                files = {'upload_file': (self.generateID() ,open(MODEL_PICKEL_FILENAME,'rb'),"multipart/form-data")}
+
+                resp  = requests.post(url = search_api_url, files=files)
+                print(resp.json())
+                with open('test.txt', 'w') as f:
+                        f.write(PROJECT_ID)
+                return "sent"
+        except Exception as e : 
+                print(e)
+                return "!sent"
+        #throws error if 
+        #request denied
+
+    def aggregateModels(self,project_id):
+        # aggregate request for ML Service
+
+        PROJECT_ID = project_id
+
+        try:
+                if(PROJECT_ID == None):
+                        PROJECT_ID = project_id
+                search_api_url = "https://fedstation-ml-service.herokuapp.com/aggregate/" + PROJECT_ID
+                resp  = requests.get(url = search_api_url)
+                return resp.json()
+        except Exception as e : 
+                raise e
+
+# if __name__ == "__main__" :
+#     F = Fedstation()
+    # F.sendModelToServer("k_k")
+    # print(F.aggregateModels("exp_track"))
+    #F.initializeProject("k_k" , "1648444147210UCHNXNT" ,'"C:\\Users\\Yashw\\Documents\\4-2\\Major Project\\Code\\FedStation-lib\\src\\Fedstation\\constants.py"') 

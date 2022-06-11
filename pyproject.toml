@@ -3,7 +3,7 @@ requires = [
     "setuptools>=42",
     "wheel",
     "requests",
-    "pickle-mixin"
-    
+    "pickle-mixin",
+    "pmdarima"
 ]
 build-backend = "setuptools.build_meta"
